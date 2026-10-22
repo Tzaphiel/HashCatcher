@@ -1,7 +1,0 @@
-Package: hashcatcher
-Version: 1.0.0
-Section: utils
-Priority: optional
-Architecture: amd64
-Maintainer: Tahsasiyahu
-Description: Offline wireless capture conversion utility

@@ -1,12 +1,3 @@
-# 📄 .github/workflows/release.yml
-
-Save this file as:
-
-```text
-.github/workflows/release.yml
-```
-
-```yaml
 name: HashCatcher Release Pipeline
 
 on:
@@ -49,7 +40,7 @@ jobs:
             --onefile \
             --windowed \
             --name HashCatcher \
-            --icon assets/hashcatcher-logo.png \
+            --icon assets/hashcather-logo.png \
             src/main.py
 
       - name: Create Debian Package Structure
@@ -62,7 +53,7 @@ jobs:
           cp dist/HashCatcher package/usr/local/bin/hashcatcher
           chmod +x package/usr/local/bin/hashcatcher
 
-          cp assets/hashcatcher-logo.png \
+          cp assets/hashcather-logo.png \
              package/usr/share/icons/hicolor/256x256/apps/hashcatcher.png
 
           cat > package/DEBIAN/control <<EOF
@@ -112,11 +103,11 @@ jobs:
 
       - name: Build Windows Executable
         run: |
-          pyinstaller ^
-            --onefile ^
-            --windowed ^
-            --name HashCatcher ^
-            --icon assets/hashcatcher-logo.png ^
+          pyinstaller `
+            --onefile `
+            --windowed `
+            --name HashCatcher `
+            --icon assets/hashcather-logo.png `
             src/main.py
 
       - name: Upload Windows Artifact
@@ -142,7 +133,7 @@ jobs:
             --onefile \
             --windowed \
             --name HashCatcher \
-            --icon assets/hashcatcher-logo.png \
+            --icon assets/hashcather-logo.png \
             src/main.py
 
       - name: Upload macOS Artifact
@@ -188,90 +179,3 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-# 🚀 HOW TO USE
-
-## 1. Create workflow folder
-
-```text
-.github/workflows/
-```
-
----
-
-## 2. Save file
-
-```text
-.github/workflows/release.yml
-```
-
----
-
-## 3. Commit workflow
-
-```bash
-git add .
-git commit -m "Added release pipeline"
-git push origin main --force
-```
-
----
-
-# 🚀 CREATE RELEASE
-
-Create release tag:
-
-```bash
-git tag v1.0.0
-```
-
-Push tag:
-
-```bash
-git push origin v1.0.0
-```
-
----
-
-# ⚡ WHAT HAPPENS AUTOMATICALLY
-
-GitHub Actions now:
-
-* builds Linux binary
-* builds Debian package
-* builds Windows executable
-* builds macOS application
-* uploads all release assets
-* creates GitHub release page
-
----
-
-# 📦 DOWNLOAD RELEASE FILES
-
-After workflow completes:
-
-```text
-Repository → Releases
-```
-
-or:
-
-```text
-Repository → Actions → Artifacts
-```
-
----
-
-# 🐾 RESULT
-
-HashCatcher now has:
-
-* automated release pipeline
-* cross-platform builds
-* downloadable packages
-* professional GitHub release workflow
-* automatic asset publishing
-
