@@ -7,11 +7,13 @@
    block, usage instructions) instead of the workflow itself. GitHub Actions
    would have failed to parse it on the next tag push. Replaced with the
    actual YAML only.
-2. **Icon filename mismatch.** The workflow referenced
-   `assets/hashcatcher-logo.png`, but the file in the repo is named
-   `assets/hashcather-logo.png` (note the different spelling). The
-   PyInstaller `--icon` step would have failed the build. Pointed the
-   workflow at the file that actually exists.
+2. **Icon file wasn't where the workflow expected it.** The workflow
+   referenced `assets/hashcatcher-logo.png`, but the logo was sitting at the
+   repo root as `hashcather-logo.png` (note the different spelling too) and
+   wasn't in `assets/` at all. The PyInstaller `--icon` step, and the Linux
+   job's `.desktop`/icon packaging step, would have failed. Moved the file
+   into `assets/hashcather-logo.png` and pointed the workflow at it; the app
+   itself now also uses it for the window icon and header logo.
 3. **Wrong line-continuation character on Windows.** The `windows-build` job
    used `^` (cmd.exe) inside a `run:` block, but GitHub's `windows-latest`
    runner executes `run:` steps in PowerShell by default, where `^` is not a
@@ -44,6 +46,19 @@
    committed by accident. `requirements.txt` was referenced by the README
    but didn't exist; added it.
 
+## Applied in a follow-up pass
+
+- **Redesigned the app window.** The running app previously looked nothing
+  like the marketing mockup (`assets/banner.png`): a bare title bar, toolbar,
+  table, progress bar and log box with no branding. Rebuilt `src/main.py`'s
+  layout to match the mockup — header with the logo, "HashCatcher" title, a
+  `v1.0` badge and subtitle; a left sidebar listing the app's capabilities;
+  a drag-and-drop zone next to the queue table; and a footer bar showing
+  supported input formats, the output format, and the "authorized use only"
+  notice. Functionality (worker thread, drag & drop, conversion) is
+  unchanged — this was styling/layout only, using the logo now at
+  `assets/hashcather-logo.png` for both the header and the window icon.
+
 ## Remaining suggestions (not yet applied — listed for prioritization)
 
 - **True parallelism.** The README advertises a "Multi-threaded Engine," but
@@ -65,10 +80,11 @@
 - **CI currently only runs on tag push.** There's no `on: pull_request`/`push`
   job that at least `python -m py_compile`s the app and runs lint, so a
   broken `main.py` wouldn't be caught until someone tries to tag a release.
-- **Window/app icon.** `assets/hashcather-logo.png` exists but
-  `HashCatcher.spec` and the app itself don't set it, so the running app and
-  packaged binaries show a generic icon outside of the one place
-  (`--icon` in the GitHub Actions build) it's used.
+- **`HashCatcher.spec` doesn't set `--icon`.** The GitHub Actions build
+  passes `--icon` directly to `pyinstaller`, but a local
+  `pyinstaller HashCatcher.spec` build (what `build_deb.sh` expects to have
+  run first) won't pick up the icon since the `.spec` file's `EXE(...)` has
+  no `icon=` argument. Worth adding for parity with the CI build.
 - **Duplicate build tooling.** `build_deb.sh` lives at repo root while the
   README documents `scripts/build_deb.sh`, and there's a second,
   near-duplicate `scripts/package/DEBIAN/control`. Worth consolidating to one
