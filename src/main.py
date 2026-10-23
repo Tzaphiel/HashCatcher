@@ -889,7 +889,7 @@ class HashCatcher(QMainWindow):
         type_label = QLabel(file_path.suffix.lstrip(".").upper())
         type_label.setObjectName("typePill")
         type_label.setAlignment(Qt.AlignCenter)
-        type_wrap_layout.addWidget(type_label)
+        type_wrap_layout.addWidget(type_label, 0, Qt.AlignVCenter)
         type_wrap_layout.addStretch(1)
         self.table.setCellWidget(row, 2, type_wrap)
 
