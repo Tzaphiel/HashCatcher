@@ -823,8 +823,8 @@ class HashCatcher(QMainWindow):
             #rowIndex {{ color: {MUTED}; }}
             #rowFileName {{ color: #f5f5f5; font-weight: bold; }}
             #typePill {{
-                background-color: #1c1c1e; color: {GRAY_TEXT}; border: 1px solid #2e2e30; border-radius: 10px;
-                padding: 2px 10px; font-size: 8.5pt; font-weight: bold;
+                background-color: rgba(194,24,91,0.15); color: #ff9fb8; border: 1px solid rgba(194,24,91,0.4); border-radius: 11px;
+                padding: 2px 12px; font-size: 8.5pt; font-weight: bold;
             }}
             #rowOutput {{ color: #c9b8bf; font-size: 9pt; }}
             #rowProgressText {{ color: {MUTED}; font-size: 8.5pt; }}
@@ -833,7 +833,7 @@ class HashCatcher(QMainWindow):
             QToolButton#openFolderBtn:hover {{ background-color: #241019; }}
 
             QProgressBar#rowProgress {{ border-radius: 4px; background-color: #241019; height: 6px; }}
-            QProgressBar#rowProgress::chunk {{ background-color: {PINK_STRONG}; border-radius: 4px; }}
+            QProgressBar#rowProgress::chunk {{ background-color: {GREEN}; border-radius: 4px; }}
 
             #statusBar {{ background-color: #0a0609; border-top: 1px solid #241420; }}
             #statusBarText {{ color: {MUTED}; font-size: 8.5pt; }}
