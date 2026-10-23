@@ -1,19 +1,15 @@
 <div align="center">
 
-# 🐾 HashCatcher (In Develeopment)
+# 🐾 HashCatcher
 
 ### Offline Wireless Capture → Hashcat 22000 Converter
 
 <img src="assets/banner.png" width="100%">
 
-<br>
-
 ![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-black)
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 ![Qt](https://img.shields.io/badge/gui-PySide6-green)
 ![License](https://img.shields.io/badge/license-GPL--3.0-red)
-
-<br>
 
 Fast. Offline. Desktop-native. Optimized for Hashcat workflows.
 
@@ -21,65 +17,34 @@ Fast. Offline. Desktop-native. Optimized for Hashcat workflows.
 
 ---
 
-# 📖 Overview
+## 📖 Overview
 
-HashCatcher is a modern graphical desktop application designed for converting wireless capture files into Hashcat-compatible `22000` format using `hcxtools`.
+HashCatcher is a graphical desktop application for converting wireless capture files into Hashcat-compatible `22000` format using [`hcxtools`](https://github.com/ZerBea/hcxtools).
 
-The application simplifies wireless auditing workflows by providing:
-
-- drag & drop importing
-- batch conversion queues
-- real-time progress tracking
-- multi-threaded processing
-- desktop integration
-- cross-platform packaging
-- offline operation
-
-HashCatcher is intended for:
+It's intended for:
 
 - authorized wireless auditing
 - password recovery workflows
 - educational research
-- penetration testing environments
+- penetration testing engagements
 
----
+## ✨ Features
 
-# ✨ Features
-
----
-
-## 📂 Supported Input Formats
-
-- `.cap`
-- `.pcap`
-- `.pcapng`
-
----
-
-## 🔐 Output Format
-
-- Hashcat `22000`
-
----
-
-# ⚡ Core Features
+**Input formats:** `.cap`, `.pcap`, `.pcapng` → **Output format:** Hashcat `22000`
 
 | Feature | Description |
 |---|---|
-| 🖱 Drag & Drop | Import captures directly into GUI |
-| 📦 Batch Queue | Convert multiple captures simultaneously |
-| ⚡ Multi-threaded Engine | Optimized queue processing |
-| 🌙 Low Resource Mode | Safe for laptops & virtual machines |
-| 🖥 Desktop Integration | Native launcher integration |
-| 🔒 Offline Operation | No internet required |
+| 🖱 Drag & Drop | Import captures directly into the queue |
+| 📦 Batch Conversion Queue | Convert many captures in one run, with per-file progress |
+| ⚡ Concurrent Conversion | Up to N files converted in parallel (configurable thread count) |
+| 🌙 Low Resource Mode | Drops to single-threaded conversion for laptops & VMs |
+| 📂 Custom Output Directory | Choose where `.22000` files are written |
+| 🛠 Configurable `hcxpcapngtool` Path | Point at a non-PATH install from Settings |
+| 📊 Live System Info | Detects installed hcxtools / Hashcat versions |
+| 🔒 Offline Operation | No network access required |
 | 🌐 Cross Platform | Linux / Windows / macOS |
-| 🧠 hcxtools Integration | Native Hashcat workflow support |
-| 📊 Progress Tracking | Real-time conversion progress |
-| 🛡 Safe Execution | Isolated subprocess handling |
 
----
-
-# 🖼 Interface Preview
+## 🖼 Interface Preview
 
 <div align="center">
 
@@ -87,536 +52,130 @@ HashCatcher is intended for:
 
 </div>
 
----
-
-# 🖥 Supported Platforms
+## 🖥 Supported Platforms
 
 | Platform | Package |
 |---|---|
-| 🐧 Linux | `.deb` |
-| 🐧 Linux | `AppImage` |
-| 🐧 Linux | `Flatpak` |
+| 🐧 Linux | `.deb`, AppImage, Flatpak |
 | 🪟 Windows | `.exe` |
 | 🍎 macOS | `.dmg` |
 
----
+## 📦 Prebuilt Packages
 
-# 📦 Prebuilt Packages
+Prebuilt packages are published in [GitHub Releases](https://github.com/Tzaphiel/HashCatcher/releases):
+Debian Package (`.deb`), AppImage, Flatpak, Windows Installer (`.exe`), macOS Disk Image (`.dmg`).
 
-Prebuilt packages are available in the GitHub Releases section.
+## ⚙ Installation
 
-## Download
-
-Visit:
-
-https://github.com/Tahsasiyahu/HashCatcher/releases
-
-Available packages:
-
-- Debian Package (`.deb`)
-- AppImage
-- Flatpak
-- Windows Installer (`.exe`)
-- macOS Disk Image (`.dmg`)
-
----
-
-# ⚙ Installation
-
----
-
-# 🐧 Debian / Ubuntu Installation
-
-## 1. Download package
-
-Example:
-
-```text
-hashcatcher_1.0.0.deb
-```
-
----
-
-## 2. Install package
+### Debian / Ubuntu
 
 ```bash
 sudo dpkg -i hashcatcher_1.0.0.deb
+sudo apt -f install   # fix dependencies if required
+hashcatcher           # or: Applications → Utilities → HashCatcher
 ```
 
----
-
-## 3. Fix dependencies if required
-
-```bash
-sudo apt -f install
-```
-
----
-
-## 4. Launch application
-
-From terminal:
-
-```bash
-hashcatcher
-```
-
-or from application menu:
-
-```text
-Applications → Utilities → HashCatcher
-```
-
----
-
-# 🚀 AppImage Installation
-
-## Make executable
+### AppImage
 
 ```bash
 chmod +x HashCatcher.AppImage
-```
-
----
-
-## Launch
-
-```bash
 ./HashCatcher.AppImage
 ```
 
----
-
-# 📦 Flatpak Installation
-
-## Install Flatpak runtime
+### Flatpak
 
 ```bash
 sudo apt install flatpak
-```
-
----
-
-## Install package
-
-```bash
 flatpak install hashcatcher.flatpak
-```
-
----
-
-## Launch
-
-```bash
 flatpak run io.hashcatcher.HashCatcher
 ```
 
----
+### Windows
 
-# 🪟 Windows Installation
+Run `HashCatcher_Setup.exe` and follow the installer. If SmartScreen appears, click **More Info → Run Anyway**. Launch from the Start Menu afterward.
 
-## 1. Download installer
+### macOS
 
-Example:
+Open `HashCatcher.dmg`, drag `HashCatcher.app` into **Applications**, then launch it from there.
 
-```text
-HashCatcher_Setup.exe
-```
-
----
-
-## 2. Launch installer
-
-Double-click installer.
-
----
-
-## 3. Follow installation wizard
-
-If Windows SmartScreen appears:
-
-- Click `More Info`
-- Click `Run Anyway`
-
----
-
-## 4. Launch
-
-```text
-Start Menu → HashCatcher
-```
-
----
-
-# 🍎 macOS Installation
-
-## 1. Open DMG
-
-```text
-HashCatcher.dmg
-```
-
----
-
-## 2. Drag application
-
-Move:
-
-```text
-HashCatcher.app
-```
-
-into:
-
-```text
-Applications
-```
-
----
-
-## 3. Launch
-
-```text
-Applications → HashCatcher
-```
-
----
-
-# ⚙ Build From Source
-
----
-
-# 1. Clone Repository
+## 🧑‍💻 Build From Source
 
 ```bash
-git clone https://github.com/Tahsasiyahu/HashCatcher.git
-```
-
-Enter project:
-
-```bash
+git clone https://github.com/Tzaphiel/HashCatcher.git
 cd HashCatcher
 ```
 
----
-
-# 2. Install Dependencies
-
-## Debian / Ubuntu
+**Install dependencies (Debian/Ubuntu):**
 
 ```bash
 sudo apt update
-
-sudo apt install -y \
-    python3 \
-    python3-pip \
-    python3-pyside6 \
-    hcxtools \
-    hashcat \
-    git
-```
-
----
-
-# 3. Install Python Packages
-
-```bash
+sudo apt install -y python3 python3-pip python3-pyside6 hcxtools hashcat git
 pip install -r requirements.txt
 ```
 
----
-
-# 4. Run Application
+**Run it:**
 
 ```bash
 python3 src/main.py
 ```
 
----
-
-# 5. Build Debian Package
-
-Make build script executable:
+**Build a Debian package:**
 
 ```bash
-chmod +x scripts/build_deb.sh
+chmod +x build_deb.sh
+./build_deb.sh
+# -> HashCatcher_1.0.0_amd64.deb
 ```
 
-Build package:
+## 🌐 Automated Releases
 
-```bash
-./scripts/build_deb.sh
-```
-
-Generated package:
-
-```text
-dist/hashcatcher_1.0.0.deb
-```
-
----
-
-# 🚀 One-Click Setup
-
-HashCatcher includes automated setup scripts.
-
-Run:
-
-```bash
-chmod +x setup_hashcatcher.sh
-```
-
-Execute:
-
-```bash
-./setup_hashcatcher.sh
-```
-
-This automatically:
-- installs dependencies
-- creates package structure
-- builds `.deb`
-- initializes Git repository
-
----
-
-# 🌐 GitHub Actions Auto Build
-
-HashCatcher supports automated release builds using GitHub Actions.
-
-Workflow:
-
-```text
-.github/workflows/release.yml
-```
-
----
-
-# 🚀 Trigger Automatic Release Build
-
-Create release tag:
+Pushing a version tag triggers `.github/workflows/release.yml`, which builds Linux (`.deb`), Windows (`.exe`) and macOS packages and publishes them as a GitHub Release:
 
 ```bash
 git tag v1.0.0
-```
-
-Push tag:
-
-```bash
 git push origin v1.0.0
 ```
 
-GitHub automatically:
-- builds Linux package
-- builds Windows executable
-- builds macOS package
-- uploads release assets
+Download the result from the repo's **Releases** page or the workflow's **Actions → Artifacts**.
 
----
+## 📂 Output
 
-# 📂 Output Directory
+Converted files are written next to the source capture by default (`capture.pcapng` → `capture.22000`), or to a custom folder set in **Settings → Output directory**.
 
-Generated files appear in:
+## 🔧 Troubleshooting
 
-```text
-output/
-```
+| Error | Fix |
+|---|---|
+| `src refspec main does not match any` | `git add . && git commit -m "Initial release" && git branch -M main && git push -u origin main` |
+| `Authentication failed` (git push) | GitHub no longer accepts password auth. Create a [Personal Access Token](https://github.com/settings/tokens) and use it in place of your password. |
+| `failed to push some refs` | `git push -u origin main --force` (only if you intend to overwrite the remote branch) |
+| `hcxtools not found` / `hcxpcapngtool was not found` | `sudo apt install hcxtools`, or set a custom path in **Settings** |
+| `ModuleNotFoundError: PySide6` | `sudo apt install python3-pyside6` or `pip install PySide6` |
+| `Permission denied` running a script | `chmod +x scriptname.sh` |
+| App won't launch | Usually missing Qt dependencies or a broken install — `sudo apt install -f` then reinstall |
 
-Example:
+## ⚡ Performance
 
-```text
-capture.pcapng.22000
-```
+Optimized for low CPU/memory usage, background-safe execution, and large batch processing across multi-core systems — conversion runs several files concurrently (tunable in Settings, or capped to one with Low Resource Mode).
 
----
+## 🔐 Security Notice
 
-# 🔧 Troubleshooting
+HashCatcher is intended exclusively for authorized security testing, educational environments, and legal wireless auditing. Unauthorized access to systems or credentials may violate laws and regulations.
 
----
+## 📜 License
 
-# ❌ Error:
-```text
-src refspec main does not match any
-```
+[GPL-3.0](LICENSE)
 
-## Fix
+## 🙏 Credits
 
-```bash
-git add .
+**Developed by:** Tahsasiyahu
 
-git commit -m "Initial release"
-
-git branch -M main
-
-git push -u origin main
-```
-
----
-
-# ❌ Error:
-```text
-Authentication failed
-```
-
-## Cause
-
-GitHub no longer supports password authentication.
-
----
-
-## Fix
-
-Create Personal Access Token:
-
-https://github.com/settings/tokens
-
-Use token instead of GitHub password.
-
----
-
-# ❌ Error:
-```text
-failed to push some refs
-```
-
-## Fix
-
-```bash
-git push -u origin main --force
-```
-
----
-
-# ❌ Error:
-```text
-hcxtools not found
-```
-
-## Fix
-
-```bash
-sudo apt install hcxtools
-```
-
----
-
-# ❌ Error:
-```text
-ModuleNotFoundError: PySide6
-```
-
-## Fix
-
-```bash
-sudo apt install python3-pyside6
-```
-
-or:
-
-```bash
-pip install PySide6
-```
-
----
-
-# ❌ Error:
-```text
-Permission denied
-```
-
-## Fix
-
-```bash
-chmod +x scriptname.sh
-```
-
----
-
-# ❌ Application does not launch
-
-## Possible causes
-
-- missing Qt dependencies
-- broken Python packages
-- missing hcxtools
-
----
-
-## Fix
-
-```bash
-sudo apt install -f
-```
-
-Then reinstall dependencies.
-
----
-
-# ⚡ Performance
-
-HashCatcher is optimized for:
-
-- low CPU usage
-- low memory usage
-- background-safe execution
-- large capture batch processing
-- multi-core systems
-
----
-
-# 🔐 Security Notice
-
-HashCatcher is intended exclusively for:
-
-- authorized security testing
-- educational environments
-- legal wireless auditing
-
-Unauthorized access to systems or credentials may violate laws and regulations.
-
----
-
-# 📜 License
-
-GPL-3.0
-
----
-
-# 🙏 Credits
-
-## Developed By
-
-Tahsasiyahu
-
----
-
-## Technologies Used
-
-- Python
-- PySide6 / Qt6
-- hcxtools
-- Hashcat
-- GitHub Actions
-
----
-
-## Open Source Components
-
-### hcxtools
-Wireless capture conversion utilities.
-
-### Hashcat
-Advanced password recovery framework.
-
-### Qt / PySide6
-Cross-platform graphical interface framework.
+**Built with:** Python, PySide6 / Qt6, [hcxtools](https://github.com/ZerBea/hcxtools), [Hashcat](https://hashcat.net/hashcat/), GitHub Actions. Nav/status icons from [Feather Icons](https://feathericons.com/) (MIT).
 
 ---
 
 <div align="center">
 
-# 🐾 HashCatcher
-
-### Catching Hashes Efficiently
+### 🐾 HashCatcher — Catching Hashes Efficiently
 
 </div>
