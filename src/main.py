@@ -737,7 +737,7 @@ class HashCatcher(QMainWindow):
             self.ready_pill.setText(f"● {state}")
             self.ready_pill.setStyleSheet(
                 f"background-color: rgba(255,255,255,0.04); color: {color}; "
-                f"border: 1px solid #2b1620; border-radius: 14px; padding: 6px 14px; font-weight: bold;"
+                f"border: 1px solid #2e2e33; border-radius: 14px; padding: 6px 14px; font-weight: bold;"
             )
 
     # ------------------------------------------------------------------
@@ -745,7 +745,7 @@ class HashCatcher(QMainWindow):
     # ------------------------------------------------------------------
     def apply_theme(self):
         self.setStyleSheet(f"""
-            QMainWindow, #central {{ background-color: #0f0a0d; }}
+            QMainWindow, #central {{ background-color: #121214; }}
 
             QWidget {{
                 background-color: transparent;
@@ -754,12 +754,12 @@ class HashCatcher(QMainWindow):
                 font-size: 10.5pt;
             }}
 
-            #sidebar {{ background-color: #150e11; border-right: 1px solid #241420; }}
+            #sidebar {{ background-color: #18181b; border-right: 1px solid #28282c; }}
             #appTitle {{ color: #ffffff; }}
             #versionBadge {{
                 background-color: rgba(255,255,255,0.06);
                 color: {GRAY_TEXT};
-                border: 1px solid #3a222c;
+                border: 1px solid #3a3a40;
                 border-radius: 8px;
                 padding: 2px 10px;
                 font-weight: bold;
@@ -775,14 +775,14 @@ class HashCatcher(QMainWindow):
                 font-weight: bold;
             }}
             QToolButton#navItemActive {{ background-color: #7a1f42; color: #ffffff; }}
-            QToolButton#navItem:hover {{ background-color: #231319; }}
+            QToolButton#navItem:hover {{ background-color: #26262a; }}
 
-            #infoCard {{ background-color: #241019; border: 1px solid #3a222c; border-radius: 10px; }}
+            #infoCard {{ background-color: #262629; border: 1px solid #3a3a40; border-radius: 10px; }}
             #infoCardTitle {{ color: {MUTED}; font-weight: bold; font-size: 9pt; }}
             #infoCardText {{ color: {GRAY_TEXT}; font-size: 9pt; }}
             #sidebarFooter {{ color: {MUTED}; font-size: 8pt; }}
 
-            #dropZone {{ background-color: #1c1419; border: 2px dashed #4a3c42; border-radius: 12px; }}
+            #dropZone {{ background-color: #1e1e22; border: 2px dashed #46464c; border-radius: 12px; }}
             #dropZoneHint {{ color: #ffffff; font-weight: bold; font-size: 12pt; }}
             #dropZoneSubHint {{ color: {MUTED}; font-size: 9.5pt; }}
 
@@ -797,26 +797,26 @@ class HashCatcher(QMainWindow):
                 background-color: #c2185b; border-radius: 10px; padding: 12px 28px; color: white; font-weight: bold; font-size: 11pt;
             }}
             QPushButton#primaryBtnLarge:hover {{ background-color: #ff4d7a; }}
-            QPushButton#primaryBtnLarge:disabled {{ background-color: #5c2634; color: {MUTED}; }}
+            QPushButton#primaryBtnLarge:disabled {{ background-color: #3a3a3e; color: {MUTED}; }}
 
             QPushButton#secondaryBtn {{
-                background-color: #1c1419; border: 1px solid #3a222c; border-radius: 10px; padding: 10px 16px; color: #e0c8d0; font-weight: bold;
+                background-color: #1e1e22; border: 1px solid #3a3a40; border-radius: 10px; padding: 10px 16px; color: #e0c8d0; font-weight: bold;
             }}
-            QPushButton#secondaryBtn:hover {{ background-color: #241019; }}
+            QPushButton#secondaryBtn:hover {{ background-color: #262629; }}
             QPushButton#secondaryBtn:disabled {{ color: #6a5a60; }}
 
             QToolButton#linkBtn {{ background-color: transparent; border: none; color: {PINK}; font-weight: bold; }}
             QToolButton#linkBtn:hover {{ color: {PINK_STRONG}; }}
 
             QLineEdit#outputDirField {{
-                background-color: #140b10; border: 1px solid #2b1620; border-radius: 10px; padding: 8px 12px; color: {GRAY_TEXT};
+                background-color: #18181b; border: 1px solid #2e2e33; border-radius: 10px; padding: 8px 12px; color: {GRAY_TEXT};
             }}
 
-            QTableWidget#queueTable {{ background-color: #140b10; border: 1px solid #2b1620; border-radius: 10px; }}
-            QTableWidget#queueTable::item {{ border-bottom: 1px solid #241420; }}
+            QTableWidget#queueTable {{ background-color: #18181b; border: 1px solid #2e2e33; border-radius: 10px; }}
+            QTableWidget#queueTable::item {{ border-bottom: 1px solid #28282c; }}
             QTableWidget#queueTable::item:selected {{ background-color: rgba(194,24,91,0.15); }}
             QHeaderView::section {{
-                background-color: #1c141a; color: {GRAY_TEXT}; border: none; border-bottom: 1px solid #2b1620;
+                background-color: #1e1e22; color: {GRAY_TEXT}; border: none; border-bottom: 1px solid #2e2e33;
                 padding: 8px 6px; font-weight: bold;
             }}
 
@@ -830,12 +830,12 @@ class HashCatcher(QMainWindow):
             #rowProgressText {{ color: {MUTED}; font-size: 8.5pt; }}
 
             QToolButton#openFolderBtn {{ background-color: transparent; border: none; border-radius: 6px; padding: 4px; }}
-            QToolButton#openFolderBtn:hover {{ background-color: #241019; }}
+            QToolButton#openFolderBtn:hover {{ background-color: #262629; }}
 
-            QProgressBar#rowProgress {{ border-radius: 4px; background-color: #241019; height: 6px; }}
+            QProgressBar#rowProgress {{ border-radius: 4px; background-color: #262629; height: 6px; }}
             QProgressBar#rowProgress::chunk {{ background-color: {GREEN}; border-radius: 4px; }}
 
-            #statusBar {{ background-color: #0a0609; border-top: 1px solid #241420; }}
+            #statusBar {{ background-color: #0e0e10; border-top: 1px solid #28282c; }}
             #statusBarText {{ color: {MUTED}; font-size: 8.5pt; }}
         """)
 
