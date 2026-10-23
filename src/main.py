@@ -471,7 +471,7 @@ class HashCatcher(QMainWindow):
         btn = QToolButton()
         btn.setObjectName("navItemActive" if action == "dashboard" else "navItem")
         btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        btn.setIcon(make_icon(icon, 18, PINK if action == "dashboard" else MUTED, 2.0))
+        btn.setIcon(make_icon(icon, 18, PINK if action == "dashboard" else "#b97a93", 2.0))
         btn.setIconSize(btn.iconSize())
         text = title if not subtitle else f"{title}\n{subtitle}"
         btn.setText(text.replace("&", "&&"))
@@ -632,19 +632,21 @@ class HashCatcher(QMainWindow):
         self.table.setHorizontalHeaderLabels(
             ["#", "File Name", "Type", "Size", "Status", "Progress", "Output"]
         )
-        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.horizontalHeader().setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.table.horizontalHeader().setStretchLastSection(False)
         self.table.verticalHeader().setVisible(False)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.table.setShowGrid(False)
 
-        self.table.setColumnWidth(0, 36)
+        self.table.setColumnWidth(0, 44)
         self.table.setColumnWidth(1, 260)
-        self.table.setColumnWidth(2, 90)
-        self.table.setColumnWidth(3, 90)
-        self.table.setColumnWidth(4, 120)
-        self.table.setColumnWidth(5, 160)
+        self.table.setColumnWidth(2, 100)
+        self.table.setColumnWidth(3, 100)
+        self.table.setColumnWidth(4, 130)
+        self.table.setColumnWidth(5, 190)
+        self.table.setColumnWidth(6, 230)
 
         layout.addWidget(self.table, 1)
 
@@ -768,14 +770,14 @@ class HashCatcher(QMainWindow):
                 text-align: left;
                 border: none;
                 border-radius: 10px;
-                padding: 8px 10px;
-                color: {MUTED};
+                padding: 10px 12px;
+                color: #d9b8c4;
                 font-weight: bold;
             }}
-            QToolButton#navItemActive {{ background-color: rgba(194,24,91,0.18); color: #ffffff; }}
-            QToolButton#navItem:hover {{ background-color: #1c1419; }}
+            QToolButton#navItemActive {{ background-color: #7a1f42; color: #ffffff; }}
+            QToolButton#navItem:hover {{ background-color: #231319; }}
 
-            #infoCard {{ background-color: #1c1419; border: 1px solid #2b1620; border-radius: 10px; }}
+            #infoCard {{ background-color: #241019; border: 1px solid #3a222c; border-radius: 10px; }}
             #infoCardTitle {{ color: {MUTED}; font-weight: bold; font-size: 9pt; }}
             #infoCardText {{ color: {GRAY_TEXT}; font-size: 9pt; }}
             #sidebarFooter {{ color: {MUTED}; font-size: 8pt; }}
@@ -883,8 +885,7 @@ class HashCatcher(QMainWindow):
 
         type_wrap = QWidget()
         type_wrap_layout = QHBoxLayout(type_wrap)
-        type_wrap_layout.setContentsMargins(0, 0, 0, 0)
-        type_wrap_layout.addStretch(1)
+        type_wrap_layout.setContentsMargins(8, 0, 0, 0)
         type_label = QLabel(file_path.suffix.lstrip(".").upper())
         type_label.setObjectName("typePill")
         type_label.setAlignment(Qt.AlignCenter)
@@ -898,7 +899,7 @@ class HashCatcher(QMainWindow):
         except OSError:
             size_text = "N/A"
         size_item = QTableWidgetItem(size_text)
-        size_item.setTextAlignment(Qt.AlignCenter)
+        size_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.table.setItem(row, 3, size_item)
 
         status_widget = QWidget()
