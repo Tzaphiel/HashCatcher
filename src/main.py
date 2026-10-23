@@ -425,11 +425,27 @@ class HashCatcher(QMainWindow):
         sidebar_layout.setSpacing(16)
 
         logo = QLabel()
-        logo.setFixedSize(72, 72)
+        logo.setFixedSize(92, 92)
         logo.setScaledContents(True)
         if LOGO_PATH.exists():
             logo.setPixmap(QPixmap(str(LOGO_PATH)))
         sidebar_layout.addWidget(logo, alignment=Qt.AlignHCenter)
+
+        brand_block = QVBoxLayout()
+        brand_block.setSpacing(2)
+        brand_block.setContentsMargins(0, 2, 0, 0)
+
+        brand_name = QLabel("HashCatcher")
+        brand_name.setObjectName("sidebarBrandName")
+        brand_name.setAlignment(Qt.AlignCenter)
+        brand_block.addWidget(brand_name)
+
+        brand_version = QLabel(f"v{APP_VERSION.rsplit('.', 1)[0]}")
+        brand_version.setObjectName("sidebarBrandVersion")
+        brand_version.setAlignment(Qt.AlignCenter)
+        brand_block.addWidget(brand_version)
+
+        sidebar_layout.addLayout(brand_block)
 
         nav_block = QVBoxLayout()
         nav_block.setSpacing(6)
@@ -471,7 +487,7 @@ class HashCatcher(QMainWindow):
         btn = QToolButton()
         btn.setObjectName("navItemActive" if action == "dashboard" else "navItem")
         btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        btn.setIcon(make_icon(icon, 18, PINK if action == "dashboard" else "#b97a93", 2.0))
+        btn.setIcon(make_icon(icon, 18, "#ffffff" if action == "dashboard" else "#b97a93", 2.0))
         btn.setIconSize(btn.iconSize())
         text = title if not subtitle else f"{title}\n{subtitle}"
         btn.setText(text.replace("&", "&&"))
@@ -766,6 +782,9 @@ class HashCatcher(QMainWindow):
             }}
             #subtitle {{ color: {MUTED}; font-size: 10pt; }}
 
+            #sidebarBrandName {{ color: #ffffff; font-weight: bold; font-size: 12.5pt; }}
+            #sidebarBrandVersion {{ color: {MUTED}; font-size: 8.5pt; }}
+
             QToolButton#navItem, QToolButton#navItemActive {{
                 text-align: left;
                 border: none;
@@ -774,7 +793,11 @@ class HashCatcher(QMainWindow):
                 color: #d9b8c4;
                 font-weight: bold;
             }}
-            QToolButton#navItemActive {{ background-color: #7a1f42; color: #ffffff; }}
+            QToolButton#navItemActive {{
+                background-color: #c2185b;
+                color: #ffffff;
+            }}
+            QToolButton#navItemActive:hover {{ background-color: #ff4d7a; }}
             QToolButton#navItem:hover {{ background-color: #26262a; }}
 
             #infoCard {{ background-color: #262629; border: 1px solid #3a3a40; border-radius: 10px; }}
