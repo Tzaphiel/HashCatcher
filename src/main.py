@@ -823,7 +823,7 @@ class HashCatcher(QMainWindow):
             #rowIndex {{ color: {MUTED}; }}
             #rowFileName {{ color: #f5f5f5; font-weight: bold; }}
             #typePill {{
-                background-color: rgba(194,24,91,0.15); color: #ff9fb8; border: 1px solid rgba(194,24,91,0.4); border-radius: 11px;
+                background-color: rgba(194,24,91,0.15); color: #ff9fb8; border: 1px solid rgba(194,24,91,0.4); border-radius: 20px;
                 padding: 2px 12px; font-size: 8.5pt; font-weight: bold;
             }}
             #rowOutput {{ color: #c9b8bf; font-size: 9pt; }}
