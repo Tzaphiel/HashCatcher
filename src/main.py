@@ -369,6 +369,50 @@ SIDEBAR_ITEMS = (
 )
 
 
+class NavButton(QFrame):
+    """A sidebar nav row: icon + title (+ optional subtitle), with full control
+    over alignment and per-label color - QToolButton's single-color icon+text
+    layout can't do a white title over a muted subtitle on its own."""
+
+    clicked = Signal()
+
+    def __init__(self, icon_name, title, subtitle, active=False):
+        super().__init__()
+        self.setObjectName("navItemActive" if active else "navItem")
+        self.setCursor(Qt.PointingHandCursor)
+        self.setAttribute(Qt.WA_Hover, True)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(12, 9, 12, 9)
+        layout.setSpacing(10)
+
+        icon_color = "#ffffff" if active else "#b97a93"
+        icon_lbl = QLabel()
+        icon_lbl.setObjectName("navIcon")
+        icon_lbl.setPixmap(make_icon(icon_name, 18, icon_color, 2.0).pixmap(18, 18))
+        layout.addWidget(icon_lbl, 0, Qt.AlignVCenter)
+
+        text_block = QVBoxLayout()
+        text_block.setSpacing(1)
+
+        title_lbl = QLabel(title)
+        title_lbl.setObjectName("navTitle")
+        text_block.addWidget(title_lbl)
+
+        if subtitle:
+            subtitle_lbl = QLabel(subtitle)
+            subtitle_lbl.setObjectName("navSubtitle")
+            text_block.addWidget(subtitle_lbl)
+
+        layout.addLayout(text_block, 1)
+        layout.setAlignment(text_block, Qt.AlignVCenter)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
+        super().mousePressEvent(event)
+
+
 class HashCatcher(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -484,16 +528,9 @@ class HashCatcher(QMainWindow):
         layout.addWidget(sidebar)
 
     def _make_nav_item(self, icon, title, subtitle, action):
-        btn = QToolButton()
-        btn.setObjectName("navItemActive" if action == "dashboard" else "navItem")
-        btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        btn.setIcon(make_icon(icon, 18, "#ffffff" if action == "dashboard" else "#b97a93", 2.0))
-        btn.setIconSize(btn.iconSize())
-        text = title if not subtitle else f"{title}\n{subtitle}"
-        btn.setText(text.replace("&", "&&"))
-        btn.setCursor(Qt.PointingHandCursor)
+        btn = NavButton(icon, title, subtitle, active=(action == "dashboard"))
         if action:
-            btn.clicked.connect(lambda _c=False, a=action: self.handle_nav(a))
+            btn.clicked.connect(lambda a=action: self.handle_nav(a))
         return btn
 
     def _make_info_row(self, label_text):
@@ -785,20 +822,14 @@ class HashCatcher(QMainWindow):
             #sidebarBrandName {{ color: #ffffff; font-weight: bold; font-size: 12.5pt; }}
             #sidebarBrandVersion {{ color: {MUTED}; font-size: 8.5pt; }}
 
-            QToolButton#navItem, QToolButton#navItemActive {{
-                text-align: left;
-                border: none;
-                border-radius: 10px;
-                padding: 10px 12px;
-                color: #d9b8c4;
-                font-weight: bold;
-            }}
-            QToolButton#navItemActive {{
-                background-color: #c2185b;
-                color: #ffffff;
-            }}
-            QToolButton#navItemActive:hover {{ background-color: #ff4d7a; }}
-            QToolButton#navItem:hover {{ background-color: #26262a; }}
+            #navItem, #navItemActive {{ border: none; border-radius: 10px; }}
+            #navItemActive {{ background-color: #c2185b; }}
+            #navItemActive:hover {{ background-color: #ff4d7a; }}
+            #navItem:hover {{ background-color: #26262a; }}
+
+            #navTitle {{ color: #ffffff; font-weight: bold; font-size: 10pt; background: transparent; }}
+            #navSubtitle {{ color: {MUTED}; font-size: 8.5pt; background: transparent; }}
+            #navIcon {{ background: transparent; }}
 
             #infoCard {{ background-color: #262629; border: 1px solid #3a3a40; border-radius: 10px; }}
             #infoCardTitle {{ color: {MUTED}; font-weight: bold; font-size: 9pt; }}
