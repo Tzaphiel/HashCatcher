@@ -34,7 +34,17 @@ from PySide6.QtWidgets import (
 HCXPCAPNGTOOL = "hcxpcapngtool"
 HASHCAT = "hashcat"
 CAPTURE_EXTENSIONS = (".cap", ".pcap", ".pcapng")
-ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+def _resolve_assets_dir():
+    """assets/ sits next to src/ when running from source. PyInstaller
+    (see HashCatcher.spec's datas=[('assets', 'assets')]) extracts it next
+    to the executable instead, under sys._MEIPASS."""
+    frozen_base = getattr(sys, "_MEIPASS", None)
+    if frozen_base:
+        return Path(frozen_base) / "assets"
+    return Path(__file__).resolve().parent.parent / "assets"
+
+
+ASSETS_DIR = _resolve_assets_dir()
 LOGO_PATH = ASSETS_DIR / "hashcather-logo.png"
 APP_VERSION = "1.0.0"
 DEFAULT_THREADS = 4

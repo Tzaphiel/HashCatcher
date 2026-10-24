@@ -59,36 +59,43 @@
   unchanged — this was styling/layout only, using the logo now at
   `assets/hashcather-logo.png` for both the header and the window icon.
 
+## Applied in a second follow-up pass
+
+Everything below this list was open in the previous revision of this
+document; all of it is now done:
+
+- **True parallelism.** `ConversionWorker` now runs up to N files
+  concurrently via `concurrent.futures.ThreadPoolExecutor` (configurable
+  thread count in Settings, with a Low Resource Mode that forces it to 1).
+- **Persisted preferences.** hcxpcapngtool path, output directory, thread
+  count and low-resource mode are all stored via `QSettings` and restored
+  on launch.
+- **"Open output folder" action.** Each queue row has a folder button that
+  opens the output directory for that file (`QDesktopServices.openUrl`).
+  There's also a Logs page (sidebar → Logs) showing the full run log.
+- **Unit tests.** Added `tests/test_conversion.py` (stdlib `unittest`,
+  no Qt event loop needed) covering `ConversionWorker._output_path`,
+  `detect_tool_version`, and `check_hcxtools`.
+- **CI now runs on every push/PR**, not just tag pushes:
+  `.github/workflows/ci.yml` installs dependencies, compile-checks
+  `src/main.py`, and runs the test suite.
+- **`HashCatcher.spec` now sets `icon=` and bundles `assets/`** via
+  `datas=[('assets', 'assets')]`, so a local `pyinstaller HashCatcher.spec`
+  build has parity with the CI build and actually ships the logo — the app
+  itself now also resolves `assets/` correctly whether run from source or
+  from a frozen PyInstaller bundle (`sys._MEIPASS`).
+- **Duplicate build tooling.** Was really just a stale README reference to
+  `scripts/build_deb.sh`; `scripts/` was never tracked by git and the
+  README now points at the real root-level `build_deb.sh`. Nothing left to
+  consolidate.
+
 ## Remaining suggestions (not yet applied — listed for prioritization)
 
-- **True parallelism.** The README advertises a "Multi-threaded Engine," but
-  the implementation runs one `QThread` that converts files sequentially.
-  For large batches, running up to `os.cpu_count()` conversions concurrently
-  (e.g. `QThreadPool` + `QRunnable`, or a `concurrent.futures.ThreadPoolExecutor`
-  feeding progress back via signals) would make that claim true and speed up
-  big batches.
 - **Overwrite protection.** If `<file>.22000` already exists, it's silently
-  overwritten. Worth flagging in the UI (e.g. "Overwrite" badge) or offering
-  a per-file choice.
-- **Persisted preferences.** Last-used folder, output directory, and window
-  geometry aren't remembered between runs (`QSettings` is the natural fit).
-- **"Open output folder" action** after a successful batch, and a **"Open
-  log"/"Export log"** button for audit trails of a pentest engagement.
-- **Unit tests.** There's no test suite at all. The `ConversionWorker`'s
-  command-building and status logic is pure enough to test without a Qt
-  event loop (mock `subprocess.run`).
-- **CI currently only runs on tag push.** There's no `on: pull_request`/`push`
-  job that at least `python -m py_compile`s the app and runs lint, so a
-  broken `main.py` wouldn't be caught until someone tries to tag a release.
-- **`HashCatcher.spec` doesn't set `--icon`.** The GitHub Actions build
-  passes `--icon` directly to `pyinstaller`, but a local
-  `pyinstaller HashCatcher.spec` build (what `build_deb.sh` expects to have
-  run first) won't pick up the icon since the `.spec` file's `EXE(...)` has
-  no `icon=` argument. Worth adding for parity with the CI build.
-- **Duplicate build tooling.** `build_deb.sh` lives at repo root while the
-  README documents `scripts/build_deb.sh`, and there's a second,
-  near-duplicate `scripts/package/DEBIAN/control`. Worth consolidating to one
-  canonical packaging path.
+  overwritten. Worth flagging in the UI (e.g. a visible "will overwrite"
+  badge in the queue table) or offering a per-file choice before converting.
+- **Export log to file.** The Logs page shows the run log, but there's no
+  button to save it to disk for an audit trail of a pentest engagement.
 
 ## "Would Rust be a better language for this?"
 
