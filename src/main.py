@@ -207,6 +207,16 @@ def detect_tool_version(command, pattern=r"(\d+\.\d+\.\d+)"):
         return True, "installed"
 
 
+def compute_output_path(file, output_dir=""):
+    """Where a capture's .22000 will be written - shared by ConversionWorker
+    (to actually write there) and the overwrite-confirmation check in
+    HashCatcher.convert_files (to check beforehand) so the two can't drift."""
+    name = Path(file).with_suffix(".22000").name
+    if output_dir:
+        return str(Path(output_dir) / name)
+    return str(Path(file).with_suffix(".22000"))
+
+
 class ConversionWorker(QThread):
     """Runs hcxpcapngtool across a batch of capture files using up to `threads`
     concurrent worker processes (ThreadPoolExecutor), emitting per-file signals."""
@@ -224,10 +234,7 @@ class ConversionWorker(QThread):
         self.threads = max(1, threads)
 
     def _output_path(self, file):
-        name = Path(file).with_suffix(".22000").name
-        if self.output_dir:
-            return str(Path(self.output_dir) / name)
-        return str(Path(file).with_suffix(".22000"))
+        return compute_output_path(file, self.output_dir)
 
     def _convert_one(self, index, file):
         output = self._output_path(file)
@@ -373,6 +380,7 @@ class LogsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Process Logs")
         self.resize(640, 420)
+        self._text = text
 
         layout = QVBoxLayout(self)
         view = QTextEdit()
@@ -381,9 +389,33 @@ class LogsDialog(QDialog):
         view.setStyleSheet("font-family: Consolas, monospace; font-size: 9.5pt;")
         layout.addWidget(view)
 
+        button_row = QHBoxLayout()
+
+        export_btn = QPushButton(" Export Log")
+        export_btn.setIcon(make_icon("folder", 16, MUTED, 2.0))
+        export_btn.clicked.connect(self._export_log)
+        button_row.addWidget(export_btn)
+
+        button_row.addStretch(1)
+
         close_btn = QPushButton("Close")
         close_btn.clicked.connect(self.accept)
-        layout.addWidget(close_btn)
+        button_row.addWidget(close_btn)
+
+        layout.addLayout(button_row)
+
+    def _export_log(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Export Log", "hashcatcher_log.txt", "Text Files (*.txt)"
+        )
+        if not path:
+            return
+        try:
+            Path(path).write_text(self._text or "No activity yet.", encoding="utf-8")
+        except OSError as e:
+            QMessageBox.critical(self, "Export Failed", f"Could not write log: {e}")
+        else:
+            QMessageBox.information(self, "Log Exported", f"Log saved to:\n{path}")
 
 
 SIDEBAR_ITEMS = (
@@ -1120,6 +1152,26 @@ class HashCatcher(QMainWindow):
                 "hcxpcapngtool was not found.\n\nInstall hcxtools, or set a custom path in Settings.",
             )
             return
+
+        existing = [
+            compute_output_path(f, self.output_dir)
+            for f in self.files
+            if Path(compute_output_path(f, self.output_dir)).exists()
+        ]
+        if existing:
+            names = "\n".join(Path(p).name for p in existing[:10])
+            if len(existing) > 10:
+                names += f"\n... and {len(existing) - 10} more"
+            reply = QMessageBox.question(
+                self,
+                "Overwrite Existing Files?",
+                f"{len(existing)} output file(s) already exist and will be "
+                f"overwritten:\n\n{names}\n\nContinue?",
+                QMessageBox.Yes | QMessageBox.Cancel,
+                QMessageBox.Cancel,
+            )
+            if reply != QMessageBox.Yes:
+                return
 
         self.set_controls_enabled(False)
         self.update_footer_status("Converting")

@@ -17,6 +17,23 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import main  # noqa: E402
 
 
+class ComputeOutputPathTests(unittest.TestCase):
+    """compute_output_path() is shared by ConversionWorker (to write there)
+    and HashCatcher.convert_files's overwrite-confirmation check (to check
+    beforehand) - this guards they can't silently drift apart."""
+
+    def test_defaults_next_to_source_file(self):
+        self.assertEqual(
+            main.compute_output_path("/tmp/x.cap"), "/tmp/x.22000"
+        )
+
+    def test_custom_output_dir(self):
+        self.assertEqual(
+            main.compute_output_path("/tmp/x.cap", "/data/out"),
+            str(Path("/data/out/x.22000")),
+        )
+
+
 class OutputPathTests(unittest.TestCase):
     def test_defaults_next_to_source_file(self):
         worker = main.ConversionWorker(files=[], output_dir="")
