@@ -28,3 +28,6 @@ env/
 *.pcapng
 *.22000
 output/
+
+# Flatpak local build cache
+.flatpak-builder/

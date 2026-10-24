@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.hashcatcher.HashCatcher</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>HashCatcher</name>
+  <summary>Offline wireless capture conversion for Hashcat</summary>
+  <description>
+    <p>
+      HashCatcher converts wireless capture files (.cap, .pcap, .pcapng)
+      into Hashcat-compatible 22000 hashes using hcxpcapngtool, with a
+      batch queue, live progress, and concurrent conversion. It is
+      intended for authorized wireless auditing, password recovery
+      workflows, educational research, and penetration testing.
+    </p>
+    <p>
+      hcxtools and Hashcat are separate system packages this app shells
+      out to - they are not bundled and must be installed separately.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.hashcatcher.HashCatcher.desktop</launchable>
+  <url type="homepage">https://github.com/Tzaphiel/HashCatcher</url>
+  <url type="bugtracker">https://github.com/Tzaphiel/HashCatcher/issues</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.0.0" date="2026-01-01" />
+  </releases>
+</component>

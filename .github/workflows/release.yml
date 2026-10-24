@@ -36,12 +36,7 @@ jobs:
 
       - name: Build Linux Binary
         run: |
-          pyinstaller \
-            --onefile \
-            --windowed \
-            --name HashCatcher \
-            --icon assets/hashcather-logo.png \
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Create Debian Package Structure
         run: |
@@ -103,12 +98,7 @@ jobs:
 
       - name: Build Windows Executable
         run: |
-          pyinstaller `
-            --onefile `
-            --windowed `
-            --name HashCatcher `
-            --icon assets/hashcather-logo.png `
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
@@ -129,12 +119,7 @@ jobs:
 
       - name: Build macOS Application
         run: |
-          pyinstaller \
-            --onefile \
-            --windowed \
-            --name HashCatcher \
-            --icon assets/hashcather-logo.png \
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
@@ -142,11 +127,35 @@ jobs:
           name: hashcatcher-macos
           path: dist/HashCatcher
 
+  flatpak-build:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:kde-6.7
+      options: --privileged
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: hashcatcher.flatpak
+          manifest-path: io.hashcatcher.HashCatcher.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hashcatcher-flatpak
+          path: hashcatcher.flatpak
+
   github-release:
     needs:
       - linux-build
       - windows-build
       - macos-build
+      - flatpak-build
 
     runs-on: ubuntu-latest
 
@@ -169,6 +178,12 @@ jobs:
           name: hashcatcher-macos
           path: release-assets/macos
 
+      - name: Download Flatpak Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hashcatcher-flatpak
+          path: release-assets/flatpak
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -176,6 +191,7 @@ jobs:
             release-assets/linux/*
             release-assets/windows/*
             release-assets/macos/*
+            release-assets/flatpak/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

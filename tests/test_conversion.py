@@ -17,6 +17,51 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import main  # noqa: E402
 
 
+class FlatpakHostExecTests(unittest.TestCase):
+    """hcxtools/hashcat are never bundled in the Flatpak - under one, calls
+    must be routed to the host via flatpak-spawn --host, since the sandbox
+    can't see them. These lock in that routing without actually needing
+    flatpak-spawn installed (we only assert what command gets built/run)."""
+
+    @patch("main.running_in_flatpak", return_value=False)
+    def test_host_command_passthrough_outside_flatpak(self, _in_fp):
+        self.assertEqual(
+            main.host_command(["hcxpcapngtool", "-o", "x.22000", "x.cap"]),
+            ["hcxpcapngtool", "-o", "x.22000", "x.cap"],
+        )
+
+    @patch("main.running_in_flatpak", return_value=True)
+    def test_host_command_wrapped_inside_flatpak(self, _in_fp):
+        self.assertEqual(
+            main.host_command(["hcxpcapngtool", "-o", "x.22000", "x.cap"]),
+            ["flatpak-spawn", "--host", "hcxpcapngtool", "-o", "x.22000", "x.cap"],
+        )
+
+    @patch("main.shutil.which", return_value="/usr/bin/hcxpcapngtool")
+    @patch("main.running_in_flatpak", return_value=False)
+    def test_host_which_uses_shutil_outside_flatpak(self, _in_fp, mock_which):
+        self.assertEqual(main.host_which("hcxpcapngtool"), "/usr/bin/hcxpcapngtool")
+        mock_which.assert_called_once_with("hcxpcapngtool")
+
+    @patch("main.subprocess.run")
+    @patch("main.running_in_flatpak", return_value=True)
+    def test_host_which_spawns_host_inside_flatpak(self, _in_fp, mock_run):
+        mock_run.return_value = MagicMock(returncode=0, stdout="/usr/bin/hcxpcapngtool\n")
+        result = main.host_which("hcxpcapngtool")
+        self.assertEqual(result, "/usr/bin/hcxpcapngtool")
+        mock_run.assert_called_once()
+        self.assertEqual(
+            mock_run.call_args[0][0],
+            ["flatpak-spawn", "--host", "which", "hcxpcapngtool"],
+        )
+
+    @patch("main.subprocess.run")
+    @patch("main.running_in_flatpak", return_value=True)
+    def test_host_which_not_found_inside_flatpak(self, _in_fp, mock_run):
+        mock_run.return_value = MagicMock(returncode=1, stdout="")
+        self.assertIsNone(main.host_which("hcxpcapngtool"))
+
+
 class ComputeOutputPathTests(unittest.TestCase):
     """compute_output_path() is shared by ConversionWorker (to write there)
     and HashCatcher.convert_files's overwrite-confirmation check (to check

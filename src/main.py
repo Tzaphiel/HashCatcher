@@ -1,3 +1,4 @@
+import os
 import re
 import shutil
 import subprocess
@@ -37,15 +38,53 @@ CAPTURE_EXTENSIONS = (".cap", ".pcap", ".pcapng")
 def _resolve_assets_dir():
     """assets/ sits next to src/ when running from source. PyInstaller
     (see HashCatcher.spec's datas=[('assets', 'assets')]) extracts it next
-    to the executable instead, under sys._MEIPASS."""
+    to the executable instead, under sys._MEIPASS. The Flatpak build
+    (packaging/flatpak/hashcatcher) installs assets/ to its own app-local
+    path with no fixed relationship to this file either, so it points here
+    via HASHCATCHER_ASSETS_DIR instead - any other packaging that doesn't
+    fit the first two cases can use the same escape hatch."""
+    env_override = os.environ.get("HASHCATCHER_ASSETS_DIR")
+    if env_override:
+        return Path(env_override)
+
     frozen_base = getattr(sys, "_MEIPASS", None)
     if frozen_base:
         return Path(frozen_base) / "assets"
+
     return Path(__file__).resolve().parent.parent / "assets"
 
 
 ASSETS_DIR = _resolve_assets_dir()
 LOGO_PATH = ASSETS_DIR / "hashcather-logo.png"
+
+
+def running_in_flatpak():
+    return "FLATPAK_ID" in os.environ or Path("/.flatpak-info").exists()
+
+
+def host_command(command):
+    """hcxpcapngtool/hashcat are system packages, never bundled in the
+    Flatpak - the sandbox can't see them directly, so route through the
+    portal-backed flatpak-spawn --host to run them on the real host."""
+    if running_in_flatpak():
+        return ["flatpak-spawn", "--host", *command]
+    return command
+
+
+def host_which(command):
+    """shutil.which() only sees the sandbox's own (near-empty) PATH under
+    Flatpak; ask the host to resolve it instead."""
+    if not running_in_flatpak():
+        return shutil.which(command)
+    try:
+        result = subprocess.run(
+            ["flatpak-spawn", "--host", "which", command],
+            capture_output=True, text=True, timeout=5,
+        )
+        path = result.stdout.strip()
+        return path if result.returncode == 0 and path else None
+    except Exception:
+        return None
 APP_VERSION = "1.0.0"
 DEFAULT_THREADS = 4
 
@@ -189,13 +228,13 @@ def load_logo_pixmap(size):
 
 def detect_tool_version(command, pattern=r"(\d+\.\d+\.\d+)"):
     """Returns (found, version_string). Never raises."""
-    path = shutil.which(command)
+    path = host_which(command)
     if not path:
         return False, "Not found"
 
     try:
         result = subprocess.run(
-            [command, "--version"],
+            host_command([command, "--version"]),
             capture_output=True,
             text=True,
             timeout=5,
@@ -249,7 +288,7 @@ class ConversionWorker(QThread):
         self.status_signal.emit(index, "Running")
         self.row_progress_signal.emit(index, 10)
 
-        command = [self.hcx_path, "-o", output, file]
+        command = host_command([self.hcx_path, "-o", output, file])
 
         try:
             result = subprocess.run(command, check=True, capture_output=True, text=True)
@@ -1211,8 +1250,17 @@ class HashCatcher(QMainWindow):
     def check_hcxtools(self):
         path = self.hcx_path or HCXPCAPNGTOOL
         if Path(str(path)).is_absolute():
+            if running_in_flatpak():
+                try:
+                    result = subprocess.run(
+                        ["flatpak-spawn", "--host", "test", "-f", str(path)],
+                        timeout=5,
+                    )
+                    return result.returncode == 0
+                except Exception:
+                    return False
             return Path(path).is_file()
-        return shutil.which(path) is not None
+        return host_which(path) is not None
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
