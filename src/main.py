@@ -157,6 +157,26 @@ def icon_label(name, size=18, color=MUTED, stroke=2.0):
     return label
 
 
+_LOGO_CACHE = {}
+
+
+def load_logo_pixmap(size):
+    """Pre-scales the logo with a smooth transform. QLabel.setScaledContents()
+    uses a fast (non-smooth) scale that fringes the alpha edge of a large
+    source image shrunk to a small label - this avoids that."""
+    if size in _LOGO_CACHE:
+        return _LOGO_CACHE[size]
+
+    if not LOGO_PATH.exists():
+        return None
+
+    pixmap = QPixmap(str(LOGO_PATH)).scaled(
+        size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation
+    )
+    _LOGO_CACHE[size] = pixmap
+    return pixmap
+
+
 def detect_tool_version(command, pattern=r"(\d+\.\d+\.\d+)"):
     """Returns (found, version_string). Never raises."""
     path = shutil.which(command)
@@ -312,9 +332,9 @@ class AboutDialog(QDialog):
 
         logo = QLabel()
         logo.setFixedSize(56, 56)
-        logo.setScaledContents(True)
-        if LOGO_PATH.exists():
-            logo.setPixmap(QPixmap(str(LOGO_PATH)))
+        pixmap = load_logo_pixmap(56)
+        if pixmap is not None:
+            logo.setPixmap(pixmap)
         logo.setAlignment(Qt.AlignCenter)
         layout.addWidget(logo, alignment=Qt.AlignCenter)
 
@@ -386,6 +406,13 @@ class NavButton(QFrame):
         layout.setContentsMargins(12, 9, 12, 9)
         layout.setSpacing(10)
 
+        # A one-line item (no subtitle) reads as a single label, not a block
+        # of text to left-align against the two-line items below it - center
+        # the icon+title as a group instead of stretching the title leftward.
+        centered = subtitle is None
+        if centered:
+            layout.addStretch(1)
+
         icon_color = "#ffffff" if active else "#b97a93"
         icon_lbl = QLabel()
         icon_lbl.setObjectName("navIcon")
@@ -404,7 +431,11 @@ class NavButton(QFrame):
             subtitle_lbl.setObjectName("navSubtitle")
             text_block.addWidget(subtitle_lbl)
 
-        layout.addLayout(text_block, 1)
+        if centered:
+            layout.addLayout(text_block)
+            layout.addStretch(1)
+        else:
+            layout.addLayout(text_block, 1)
         layout.setAlignment(text_block, Qt.AlignVCenter)
 
     def mousePressEvent(self, event):
@@ -470,9 +501,10 @@ class HashCatcher(QMainWindow):
 
         logo = QLabel()
         logo.setFixedSize(92, 92)
-        logo.setScaledContents(True)
-        if LOGO_PATH.exists():
-            logo.setPixmap(QPixmap(str(LOGO_PATH)))
+        logo.setAlignment(Qt.AlignCenter)
+        pixmap = load_logo_pixmap(92)
+        if pixmap is not None:
+            logo.setPixmap(pixmap)
         sidebar_layout.addWidget(logo, alignment=Qt.AlignHCenter)
 
         brand_block = QVBoxLayout()
