@@ -1,12 +1,3 @@
-# 📄 .github/workflows/release.yml
-
-Save this file as:
-
-```text
-.github/workflows/release.yml
-```
-
-```yaml
 name: HashCatcher Release Pipeline
 
 on:
@@ -45,12 +36,7 @@ jobs:
 
       - name: Build Linux Binary
         run: |
-          pyinstaller \
-            --onefile \
-            --windowed \
-            --name HashCatcher \
-            --icon assets/hashcatcher-logo.png \
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Create Debian Package Structure
         run: |
@@ -62,7 +48,7 @@ jobs:
           cp dist/HashCatcher package/usr/local/bin/hashcatcher
           chmod +x package/usr/local/bin/hashcatcher
 
-          cp assets/hashcatcher-logo.png \
+          cp assets/hashcather-logo.png \
              package/usr/share/icons/hicolor/256x256/apps/hashcatcher.png
 
           cat > package/DEBIAN/control <<EOF
@@ -112,12 +98,7 @@ jobs:
 
       - name: Build Windows Executable
         run: |
-          pyinstaller ^
-            --onefile ^
-            --windowed ^
-            --name HashCatcher ^
-            --icon assets/hashcatcher-logo.png ^
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
@@ -138,12 +119,7 @@ jobs:
 
       - name: Build macOS Application
         run: |
-          pyinstaller \
-            --onefile \
-            --windowed \
-            --name HashCatcher \
-            --icon assets/hashcatcher-logo.png \
-            src/main.py
+          pyinstaller HashCatcher.spec
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
@@ -151,11 +127,35 @@ jobs:
           name: hashcatcher-macos
           path: dist/HashCatcher
 
+  flatpak-build:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:kde-6.7
+      options: --privileged
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: hashcatcher.flatpak
+          manifest-path: io.hashcatcher.HashCatcher.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hashcatcher-flatpak
+          path: hashcatcher.flatpak
+
   github-release:
     needs:
       - linux-build
       - windows-build
       - macos-build
+      - flatpak-build
 
     runs-on: ubuntu-latest
 
@@ -178,6 +178,12 @@ jobs:
           name: hashcatcher-macos
           path: release-assets/macos
 
+      - name: Download Flatpak Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hashcatcher-flatpak
+          path: release-assets/flatpak
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -185,93 +191,7 @@ jobs:
             release-assets/linux/*
             release-assets/windows/*
             release-assets/macos/*
+            release-assets/flatpak/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-# 🚀 HOW TO USE
-
-## 1. Create workflow folder
-
-```text
-.github/workflows/
-```
-
----
-
-## 2. Save file
-
-```text
-.github/workflows/release.yml
-```
-
----
-
-## 3. Commit workflow
-
-```bash
-git add .
-git commit -m "Added release pipeline"
-git push origin main --force
-```
-
----
-
-# 🚀 CREATE RELEASE
-
-Create release tag:
-
-```bash
-git tag v1.0.0
-```
-
-Push tag:
-
-```bash
-git push origin v1.0.0
-```
-
----
-
-# ⚡ WHAT HAPPENS AUTOMATICALLY
-
-GitHub Actions now:
-
-* builds Linux binary
-* builds Debian package
-* builds Windows executable
-* builds macOS application
-* uploads all release assets
-* creates GitHub release page
-
----
-
-# 📦 DOWNLOAD RELEASE FILES
-
-After workflow completes:
-
-```text
-Repository → Releases
-```
-
-or:
-
-```text
-Repository → Actions → Artifacts
-```
-
----
-
-# 🐾 RESULT
-
-HashCatcher now has:
-
-* automated release pipeline
-* cross-platform builds
-* downloadable packages
-* professional GitHub release workflow
-* automatic asset publishing
-

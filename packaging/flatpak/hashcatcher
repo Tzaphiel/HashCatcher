@@ -1,0 +1,5 @@
+#!/bin/bash
+# Flatpak entry point. Installed to /app/bin/hashcatcher by
+# io.hashcatcher.HashCatcher.yml; everything else lives under /app/share.
+export HASHCATCHER_ASSETS_DIR="/app/share/hashcatcher/assets"
+exec python3 /app/bin/hashcatcher-main.py "$@"

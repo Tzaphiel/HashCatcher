@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=HashCatcher
+Comment=Offline wireless capture conversion for Hashcat
+Exec=hashcatcher
+Icon=io.hashcatcher.HashCatcher
+Type=Application
+Categories=Utility;Security;
+Terminal=false

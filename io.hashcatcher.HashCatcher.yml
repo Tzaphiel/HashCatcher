@@ -1,0 +1,55 @@
+app-id: io.hashcatcher.HashCatcher
+runtime: org.kde.Platform
+runtime-version: "6.7"
+sdk: org.kde.Sdk
+command: hashcatcher
+
+finish-args:
+  # GUI (Wayland preferred, X11 fallback) and theming
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+  - --filesystem=xdg-config/gtk-3.0:ro
+  # Capture files can live anywhere under the user's home directory, and
+  # file-picker results need to resolve to real host paths (not portal
+  # document-ids) so flatpak-spawn --host below can act on them.
+  - --filesystem=home
+  # hcxpcapngtool and hashcat are never bundled here - they're separate,
+  # often GPU-driver-coupled (hashcat/OpenCL) system packages the user
+  # installs themselves (see README). This lets the app invoke them on
+  # the real host via `flatpak-spawn --host ...` (see src/main.py's
+  # host_command()/host_which()) instead of needing them inside the
+  # sandbox, which --filesystem=home alone would not provide.
+  - --talk-name=org.freedesktop.Flatpak
+
+modules:
+  - name: python3-pyside6
+    buildsystem: simple
+    # PySide6 ships prebuilt Qt binaries in its wheel; building it from
+    # source inside the sandbox is impractical, and Flathub-style fully
+    # offline/vendored builds are out of scope for a self-distributed
+    # package, so this installs it with network access at build time.
+    # This manifest is for self-distribution; a from-vendored-sources
+    # build is a separate effort if this ever targets Flathub.
+    build-options:
+      build-args:
+        - --share=network
+    build-commands:
+      - pip3 install --prefix=/app --no-cache-dir PySide6==6.7.*
+
+  - name: hashcatcher
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 src/main.py /app/bin/hashcatcher-main.py
+      - install -Dm644 assets/hashcather-logo.png
+          /app/share/icons/hicolor/512x512/apps/io.hashcatcher.HashCatcher.png
+      - install -Dm644 packaging/flatpak/io.hashcatcher.HashCatcher.desktop
+          /app/share/applications/io.hashcatcher.HashCatcher.desktop
+      - install -Dm644 packaging/flatpak/io.hashcatcher.HashCatcher.metainfo.xml
+          /app/share/metainfo/io.hashcatcher.HashCatcher.metainfo.xml
+      - install -Dm755 packaging/flatpak/hashcatcher /app/bin/hashcatcher
+      - cp -r assets /app/share/hashcatcher/assets
+    sources:
+      - type: dir
+        path: .
